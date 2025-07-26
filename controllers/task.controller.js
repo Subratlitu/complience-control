@@ -30,7 +30,7 @@ exports.completeTask = async (req, res) => {
 
         if (!task) return res.status(404).json({ message: 'Task not found' });
 
-        // Ensure the logged-in user is the one assigned
+        // Ensure the logged-in user is the one assigned.
         if (task.assignedTo.toString() !== req.user.id)
             return res.status(403).json({ message: 'Not allowed to update this task' });
 
