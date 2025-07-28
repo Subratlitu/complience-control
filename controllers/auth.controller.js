@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user.model');
 const Audit = require('../models/audit.model');
 const { generateToken } = require('../utills/jwt');
+const { isValidEmail } = require('../utills/validator');
+
 
 exports.signup = async (req, res) => {
   try {
@@ -11,6 +13,12 @@ exports.signup = async (req, res) => {
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: 'All fields (name, email, password, role) are required' });
     }
+
+    // Email format validation
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: 'Invalid email format' });
+    }
+
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ message: 'Email already registered' });
     if (role) {
@@ -44,6 +52,11 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Email format validation
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: 'Invalid email format' });
+    }
 
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
